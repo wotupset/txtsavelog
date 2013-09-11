@@ -1,28 +1,8 @@
 <?php
 header('Content-type: text/html; charset=utf-8');
-echo pack("CCC", 0xef,0xbb,0xbf);
 //跟txtsavelog.php放在一起
-//這個程式會產生 robots.txt
-
-$timex = time();
+$time = time();
 $tim = $timex.substr(microtime(),2,3);
-/*
-$tmp="
-User-agent:*
-Disallow:*.log$
-Allow:/*?*
-sitemap:http://".$_SERVER["SERVER_NAME"]."/sitemap_t.php
-";
-//!is_file("robots.txt")
-if(filemtime("robots.txt")<1351882158){ //若robots.txt過舊
-	$cp = fopen("robots.txt", "w+");// 讀寫模式, 指標於最後, 找不到會嘗試建立檔案
-	ftruncate($cp,0);//清空檔案內容
-	fputs($cp, $tmp);//寫入檔案內容
-	fclose($cp);
-}
-//echo filemtime('robots.txt');
-*/
-
 
 $u = "http://".$_SERVER["SERVER_NAME"]."".$_SERVER["PHP_SELF"]."";
 //echo $u."\n";
@@ -34,7 +14,7 @@ $reg_filename="/.*[0-9]{5}\.htm$/";
 $reg_dirname="/.*/";//"/.*[0-9]{4}.*/"
 $matches_unique[1] = array('.');
 
-////////根目錄(1)////////
+////////根目錄(1)////////於根目錄理論上只會收錄資料夾名稱
 $matches_unique[2] = array();
 foreach($matches_unique[1] as $val){
 	$tmparr = array();//清空暫存陣列
@@ -63,7 +43,7 @@ foreach($matches_unique[1] as $val){
 				if(preg_match($reg_filename,$tmparr[$cc])){ //同目錄底下的網頁
 					$tmp=$url2.$tmparr[$cc];
 					$tmp=str_replace('/./','/',$tmp);
-					array_push($output, "<url><loc>".$tmp."</loc></url>\n");
+					array_push($output, $tmp);//將網址存進陣列
 					//echo "根".$tmparr[$cc]."\n";
 					//echo "檔案\n";
 				}
@@ -75,7 +55,7 @@ foreach($matches_unique[1] as $val){
 }
 ////////根目錄(1)////////*
 //echo "wwww";
-////////根目錄(2)////////
+////////根目錄(2)////////向下一層
 $matches_unique[3] = array();
 foreach($matches_unique[2] as $val){
 	$tmparr = array();//清空暫存陣列
@@ -104,7 +84,7 @@ foreach($matches_unique[2] as $val){
 				if(preg_match($reg_filename,$tmparr[$cc])){ //同目錄底下的網頁
 					$tmp=$url2.$tmparr[$cc];
 					$tmp=str_replace('/./','/',$tmp);
-					array_push($output, "<url><loc>".$tmp."</loc></url>\n");
+					array_push($output, $tmp);//將網址存進陣列
 					//echo "根".$tmparr[$cc]."\n";
 					//echo "檔案\n";
 				}
@@ -116,7 +96,7 @@ foreach($matches_unique[2] as $val){
 }
 ////////根目錄(2)////////*
 //echo "wwww";
-////////根目錄(3)////////
+////////根目錄(3)////////向下兩層
 $matches_unique[4] = array();
 foreach($matches_unique[3] as $val){
 	$tmparr = array();//清空暫存陣列
@@ -145,7 +125,7 @@ foreach($matches_unique[3] as $val){
 				if(preg_match($reg_filename,$tmparr[$cc])){ //同目錄底下的網頁
 					$tmp=$url2.$tmparr[$cc];
 					$tmp=str_replace('/./','/',$tmp);
-					array_push($output, "<url><loc>".$tmp."</loc></url>\n");
+					array_push($output, $tmp);//將網址存進陣列
 					//echo "根".$tmparr[$cc]."\n";
 					//echo "檔案\n";
 				}
@@ -157,7 +137,7 @@ foreach($matches_unique[3] as $val){
 }
 ////////根目錄(3)////////*
 //echo "wwww";
-////////根目錄(4)////////
+////////根目錄(4)////////向下三層
 $matches_unique[5] = array();
 foreach($matches_unique[4] as $val){
 	$tmparr = array();//清空暫存陣列
@@ -186,7 +166,7 @@ foreach($matches_unique[4] as $val){
 				if(preg_match($reg_filename,$tmparr[$cc])){ //同目錄底下的網頁
 					$tmp=$url2.$tmparr[$cc];
 					$tmp=str_replace('/./','/',$tmp);
-					array_push($output, "<url><loc>".$tmp."</loc></url>\n");
+					array_push($output, $tmp); //將網址存進陣列
 					//echo "根".$tmparr[$cc]."\n";
 					//echo "檔案\n";
 				}
@@ -198,16 +178,38 @@ foreach($matches_unique[4] as $val){
 }
 ////////根目錄(3)////////*
 //echo "wwww";
-rsort($output);//新的在前
-array_splice($output,5000);//移除陣列第12項之後的部份
-
-
-mb_internal_encoding("UTF-8");
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
-foreach($output as $key => $value){
-	echo $value;
+rsort($output);//新的在前 
+array_splice($output,9000);//移除陣列第?項之後的部份
+$count_line = count($output);
+$echo_data='';
+$op_max=100; //輸出的url數量
+$op_max_head=30; //前段最新的url數量
+$op_max_end=$op_max-$op_max_head; //後段隨機的url數量
+if($count_line>$op_max){
+	$output_head=array_splice($output, 0, $op_max_head);//抽出陣列的一部份 //第0個開始 到第10個
+	foreach($output_head as $key => $value){
+		$echo_data.= "<url><loc>".$value."</loc></url>\n"; //前面固定的xml內容
+	}
+	array_splice($output, 0, $op_max_head);//移除陣列的一部份 //第0個開始 到第10個
+	//print_r($output);
+	$rand_keys=array_rand($output,$op_max_end);//函数从数组中随机选出一个或多个元素，并返回。
+	//print_r($rand_keys);
+	foreach($rand_keys as $key => $value){
+		$echo_data.= "<url><loc>".$output[$value]."</loc></url>\n";//後面隨機的xml內容
+	}
+}else{//檔案少於60個直接列出
+	foreach($output as $key => $value){
+		$echo_data.= "<url><loc>".$value."</loc></url>\n"; //全部的xml內容
+	}
 }
-echo '</urlset>';
+mb_internal_encoding("UTF-8");
+$utf8_pack=pack("CCC", 0xef,0xbb,0xbf);//UTF8檔頭
+$xml_head='<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+$xml_end='</urlset>';
+
+echo $utf8_pack;
+echo $xml_head;
+echo $echo_data;
+echo $xml_end;
 ?>
