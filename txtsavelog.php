@@ -32,7 +32,7 @@ switch($mode){
 	if(preg_match('/[^0-9]+/', $chk_time_dec)){die('xN');}//檢查值必須為數字
 	if($time-$chk_time_dec>8*60*60){die('xtime out');} //檢查發文時間
 	//echo $_SESSION['uid'].' '.$uid.'<br/>';
-	if($uid==$_SESSION['uid']){die('xSESSION');}
+	if($uid==$_SESSION['uid']){die("<a href='$phpself'>xSESSION</a>");}
 	$_SESSION['uid']=$uid;
 	//echo $_SESSION['uid'].' '.$uid.'<br/>';
 	//unset($_SESSION['uid']);
