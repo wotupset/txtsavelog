@@ -16,7 +16,7 @@ $chk_time_key='abc123';
 $chk_time_enc=passport_encrypt($time,$chk_time_key);
 session_start(); //session
 //
-$ver= 'log+dir ver.130828+0942'; //版本
+$ver= 'log+dir ver.131003fix0819'; //版本
 $host=$_SERVER["SERVER_NAME"]; //主機名稱
 $echo_data='';
 //
@@ -59,8 +59,8 @@ switch($mode){
 
 	$cellarr=explode("\n",$cell);
 	$title=$cellarr[1]; //取得文章標題
-	$descr=$cellarr[0].$cellarr[1].$cellarr[2];//meta標籤的描述
-	$descr=preg_replace('/\s(?=\s)/','',$descr); //除去meta標籤多餘空白
+	//$descr=$cellarr[0].$cellarr[1].$cellarr[2];//meta標籤的描述
+	//$descr=preg_replace('/\s(?=\s)/','',$descr); //除去meta標籤多餘空白
 	//&nbsp;
 
 	//引文的變色
@@ -110,15 +110,11 @@ switch($mode){
 
 
 	//輸出網頁的html的head
-	$htmlstart2=<<<EOT
+$htmlstart2=<<<EOT
 <html lang='zh'>\n
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
-<META NAME='ROBOTS' CONTENT='NOINDEX, FOLLOW'>
-<meta http-equiv='content-language' content='tw-zh'/>
-<meta name="description" content="$descr">
 <title>$title</title>
-<link href='http://fonts.googleapis.com/css?family=Cousine' rel='stylesheet' type='text/css'>
 <style>
 body {
 font-size:20px;
@@ -128,13 +124,18 @@ background-color:black;
 a:hover {color:#DD0000 !important;}
 a:visited {color:#0000EE;}
 a:link {color:#0000EE;}
-pre { font-family:'細明體','MingLiU','DejaVu Sans Mono','Cousine';}
+pre { font-family:'細明體','MingLiU';}
 .link {border-bottom:1px solid rgb(248,96,0);}
 div {display:none;}
 </style>
 </head><body>\n
 EOT;
-$htmlend2="<a href=\"../\">../</a> xlwohaetxfpr</body></html>\n";
+$htmlend2=<<<EOT
+<a href="../">../</a> <span style="color:rgb(0,137,250);">xlw</span><span style="color:rgb(255,0,43);">oha</span><span style="color:rgb(255,169,0);">etx</span><span style="color:rgb(0,167,83);">fpr</span>
+</body></html>
+EOT;
+
+
 	///
 	//檔案名稱以時間來命名
 	//$time = time();
@@ -164,7 +165,24 @@ if(!is_dir($dir_mth)){//子資料夾不存在
 }
 //
 
-	$txtfile=$dir_mth.$tim.".htm";
+$txtfile=$dir_mth.$tim.".htm";
+$url = "http://".$_SERVER["SERVER_NAME"]."".$_SERVER["PHP_SELF"]."";
+$url2=substr($url,0,strrpos($url,"/")+1); //根目錄
+$url2=$url2.$txtfile;
+
+$counter2=<<<EOT
+
+<div style="display:block;">
+<script src="https://apis.google.com/js/plusone.js">{lang: 'zh-TW'}</script>
+<g:comments 
+href="$url2" 
+width="700" 
+first_party_property="BLOGGER" 
+view_type="FILTERED_POSTMOD"> 
+</g:comments>
+</div>
+EOT;
+$counter2="";//
 	// 读写方式打开，将文件指针指向文件头并将文件大小截为零。如果文件不存在则尝试创建之。
 	$cp = fopen($txtfile, "w+") or die('failed');
 	flock($cp,2);//鎖定檔案準備寫入
@@ -214,9 +232,10 @@ if(!is_dir($dir_mth)){//子資料夾不存在
 	$cellarr2=array();
 	$countline = count($cellarr);
 	for($i = 0; $i < $countline; $i++){
-		if($cellarr[$i] != ""){
+		if($cellarr[$i] != ""){//
 			$cellarr2[$i]=explode(",",$cellarr[$i]);
-			$tmp=str_pad($i+1,3,"0",STR_PAD_LEFT);
+			$cc=$countline-$i;
+			$tmp=str_pad($cc,3,"0",STR_PAD_LEFT);
 			//$age=date("Y/m/d H:i:s",$cellarr2[$i][2]);
 			$age=date("m/d",$cellarr2[$i][2]);//將UNIX時間轉成可讀時間
 			$output.=$tmp." ".$age." <a href='".$cellarr2[$i][0]."'>".$cellarr2[$i][1]."_</a>";
@@ -229,7 +248,7 @@ if(!is_dir($dir_mth)){//子資料夾不存在
 	$tmp_link="<a href='".$phpself."'>w</a>"."<a href='./txtsavelog_index_list.php'>x</a>";
 	$output=$tmp_link.'<br/>'.$output.'<br/>'.$tmp_link;
 	$output="<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">".
-	'<meta http-equiv=\"content-language\" content=\"tw-zh\"/>'.$tmp.
+	''.$tmp.
 	"</head><body bgcolor=\"#FFFFEE\" text=\"#800000\" link=\"#0000EE\" vlink=\"#0000EE\">\n".$output."\n<br>".
 	"</body></html>";
 
@@ -249,10 +268,10 @@ if(!is_dir($dir_mth)){//子資料夾不存在
 	}
 	////--log ver
 
-	$url = "http://".$_SERVER["SERVER_NAME"]."".$_SERVER["PHP_SELF"]."";
-	$url2=substr($url,0,strrpos($url,"/")+1);
+	//$url = "http://".$_SERVER["SERVER_NAME"]."".$_SERVER["PHP_SELF"]."";
+	//$url2=substr($url,0,strrpos($url,"/")+1);
 
-	$echo_data.= "<br/><a href=".$url2.$txtfile.">".$url2.$txtfile."</a> 
+	$echo_data.= "<br/><a href=".$url2.">".$url2."</a> 
 	行數:".$countline_out." 連結:".$count_http." 大小:".$htmsize."k<br/>".$title."<br/>";
 
 	//echo '<META http-equiv="refresh" content="1;URL='.$php_read.'">';
@@ -312,9 +331,8 @@ $htmlstart=<<<EOT
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">
-<meta http-equiv=\"content-language\" content=\"tw-zh\"/>
-<META NAME='ROBOTS' CONTENT='noINDEX, FOLLOW'>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<META NAME='ROBOTS' CONTENT='noINDEX, FOLLOW'/>
 <title>$host</title>
 <style>
 body {background-color:#FFFFEE;color:#800000;}
