@@ -14,11 +14,25 @@ date_default_timezone_set("Asia/Taipei");//時區設定
 $time=(string)time();//UNIX時間時區設定
 $chk_time_key='abc123';
 $chk_time_enc=passport_encrypt($time,$chk_time_key);
+//session_save_path(realpath('./session_save/'));
 session_start(); //session
+$_SESSION['session_on']="on";
+$echo_body='';
+ob_start();
+if(isset($_SESSION['session_on'])){
+	$session_pw=$_SESSION['session_pw'];
+	echo "&#10004;session ok<br/>\n";
+}else{
+	$session_pw="";
+	echo "&#10006;session no work<br/>\n";
+}
+$echo_body=ob_get_contents();//輸出擷取到的echo
+ob_end_clean();//清空擷取到的內容
 //
 $ver= 'log+dir ver.131115fix2159'; //版本
 $host=$_SERVER["SERVER_NAME"]; //主機名稱
 $echo_data='';
+$echo_data.=$echo_body;
 //
 //<body bgcolor=\"#FFFFEE\" text=\"#800000\" link=\"#0000EE\" vlink=\"#0000EE\">
 $chk_time_enc=passport_encrypt($time,$chk_time_key);
@@ -269,7 +283,7 @@ EOT;
 	$tmp='';
 	$tmp="<title>".$host."</title>";
 	$tmp_link='';
-	$tmp_link="<a href='".$phpself."'>w</a>"."<a href='./txtsavelog_index_list.php'>x</a>";
+	$tmp_link="<a href='".$phpself."'>w</a>"."<a href='./txtsavelog_index_list.php'>x</a>"."<a href='../'>u</a>";
 	$output=$tmp_link.'<br/>'.$output.'<br/>'.$tmp_link;
 	$output="<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">".
 	''.$tmp.
