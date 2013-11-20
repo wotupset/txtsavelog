@@ -16,7 +16,7 @@ $chk_time_key='abc123';
 $chk_time_enc=passport_encrypt($time,$chk_time_key);
 session_start(); //session
 //
-$ver= 'log+dir ver.131003fix0819'; //版本
+$ver= 'log+dir ver.131115fix2159'; //版本
 $host=$_SERVER["SERVER_NAME"]; //主機名稱
 $echo_data='';
 //
@@ -131,7 +131,6 @@ div {display:none;}
 </head><body>\n
 EOT;
 $htmlend2=<<<EOT
-<a href="../">../</a> <span style="color:rgb(0,137,250);">xlw</span><span style="color:rgb(255,0,43);">oha</span><span style="color:rgb(255,169,0);">etx</span><span style="color:rgb(0,167,83);">fpr</span>
 </body></html>
 EOT;
 
@@ -171,18 +170,43 @@ $url2=substr($url,0,strrpos($url,"/")+1); //根目錄
 $url2=$url2.$txtfile;
 
 $counter2=<<<EOT
+<script type="text/javascript" id="tc_9e4dbb3f8d">
+var _tcq = _tcq || []; _tcq.push(['bblog', '9e4dbb3f8d']); 
+(function() { var e = document.createElement('script'); e.type = 'text/javascript'; e.async = true; e.src = 'http://s.tcimg.com/w/v2/bblog.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(e, s); })();
+</script>
 
-<div style="display:block;">
-<script src="https://apis.google.com/js/plusone.js">{lang: 'zh-TW'}</script>
-<g:comments 
-href="$url2" 
-width="700" 
-first_party_property="BLOGGER" 
-view_type="FILTERED_POSTMOD"> 
-</g:comments>
-</div>
+<!-- Start of StatCounter Code for Default Guide -->
+<script type="text/javascript">
+var sc_project=8971899; 
+var sc_invisible=0; 
+var sc_security="a47f72e7"; 
+var scJsHost = (("https:" == document.location.protocol) ?
+"https://secure." : "http://www.");
+document.write("<sc"+"ript type='text/javascript' src='" +
+scJsHost+
+"statcounter.com/counter/counter.js'></"+"script>");
+</script>
+<noscript><div class="statcounter"><a title="web statistics"
+href="http://statcounter.com/free-web-stats/"
+target="_blank"><img class="statcounter"
+src="http://c.statcounter.com/8971899/0/a47f72e7/0/"
+alt="web statistics"></a></div></noscript>
+<!-- End of StatCounter Code for Default Guide -->
+	
+<script id="_wauxn2">var _wau = _wau || []; _wau.push(["small", "qpf4hmopruej", "xn2"]);
+(function() {var s=document.createElement("script"); s.async=true;
+s.src="http://widgets.amung.us/small.js";
+document.getElementsByTagName("head")[0].appendChild(s);
+})();</script>
+
 EOT;
-$counter2="";//
+//***************
+$dev_link2=<<<EOT
+<a href="https://sites.google.com/site/ptttxtsave/">†</a><br>
+<a href="../">../</a> <span style="color:rgb(0,137,250);">xlw</span><span style="color:rgb(255,0,43);">oha</span><span style="color:rgb(255,169,0);">etx</span><span style="color:rgb(0,167,83);">fpr</span>
+
+$counter2
+EOT;
 	// 读写方式打开，将文件指针指向文件头并将文件大小截为零。如果文件不存在则尝试创建之。
 	$cp = fopen($txtfile, "w+") or die('failed');
 	flock($cp,2);//鎖定檔案準備寫入
@@ -192,7 +216,7 @@ $counter2="";//
 	fputs($cp, "\n<pre>\n");
 	fputs($cp, $cell);
 	fputs($cp, "\n</pre>\n");
-	fputs($cp, $dev_link);
+	fputs($cp, $dev_link2);
 	fputs($cp, $htmlend2);
 	fclose($cp);
 	$htmsize=(filesize($txtfile)/1024);//htm檔案大小
@@ -340,7 +364,7 @@ a:hover {color:#DD0000;}
 a:visited {color:#0000EE;}
 a:link {color:#0000EE;}
 .hide {display:none;}
-div {display:none;}
+body { font-family:'細明體','MingLiU';}
 </style>
 </head>
 <body>\n
@@ -380,8 +404,7 @@ function check2(){
 EOT;
 //
 $dev_link="<a href=\"https://sites.google.com/site/ptttxtsave/\">†</a><br>";
-//
-$htmlend="<a href=\"./?".$time."\">./</a> xlwohaetxfpr</body></html>\n";
+$htmlend="<a href='./'>./</a></body></html>\n";
 
 echo $htmlstart;
 echo $form;
