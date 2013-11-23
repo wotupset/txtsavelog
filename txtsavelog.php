@@ -29,7 +29,7 @@ if(isset($_SESSION['session_on'])){
 $echo_body=ob_get_contents();//輸出擷取到的echo
 ob_end_clean();//清空擷取到的內容
 //
-$ver= 'log+dir ver.131115fix2159'; //版本
+$ver= 'log+dir ver.131123fix1228'; //版本
 $host=$_SERVER["SERVER_NAME"]; //主機名稱
 $echo_data='';
 $echo_data.=$echo_body;
@@ -44,7 +44,7 @@ switch($mode){
 	case 'reg':
 	$chk_time_dec=passport_decrypt($chk_time,$chk_time_key);
 	if(preg_match('/[^0-9]+/', $chk_time_dec)){die('xN');}//檢查值必須為數字
-	if($time-$chk_time_dec>8*60*60){die('xtime out');} //檢查發文時間
+	if($time-$chk_time_dec>8*60*60){die("<a href='$phpself'>xtime out</a>");} //檢查發文時間
 	//echo $_SESSION['uid'].' '.$uid.'<br/>';
 	if($uid==$_SESSION['uid']){die("<a href='$phpself'>xSESSION</a>");}
 	$_SESSION['uid']=$uid;
@@ -255,10 +255,13 @@ EOT;
 	$buf=$txtfile.",".$title.",".$age."\n".$buf;
 	$cellarr=array();
 	$cellarr=explode("\n",$buf); //分析log
+	$cc=0;
 		foreach($cellarr as $key => $value) {//逐項檢查
 			if($cellarr[$key]==""){unset($cellarr[$key]);}//空白行去除
+			$cc=$cc+1;
 		}
-		array_splice($cellarr,300);//移除陣列第300項之後的部份
+	$log_arr_ct=$cc;
+	array_splice($cellarr,300);//移除陣列第300項之後的部份
 	$buf=implode("\n",$cellarr);
 	fputs($cp, $buf); //寫回去
 	fclose($cp);
@@ -283,7 +286,7 @@ EOT;
 	$tmp='';
 	$tmp="<title>".$host."</title>";
 	$tmp_link='';
-	$tmp_link="<a href='".$phpself."'>w</a>"."<a href='./txtsavelog_index_list.php'>x</a>"."<a href='../'>u</a>";
+	$tmp_link="<a href='$phpself'>w</a><a href='./txtsavelog_index_list.php'>x</a><a href='../'>r</a>";
 	$output=$tmp_link.'<br/>'.$output.'<br/>'.$tmp_link;
 	$output="<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">".
 	''.$tmp.
@@ -300,6 +303,7 @@ EOT;
 	fputs($cp, $output);//寫入檔案內容
 	fclose($cp);
 	$echo_data.= "".filesize($tmp)."]";//index檔案大小
+	$echo_data.=$log_arr_ct;
 	////htm//
 	if(is_file("index.php")){
 		rename("index.php","index.php_") or unlink("index.php");//index.php的優先權大於htm
