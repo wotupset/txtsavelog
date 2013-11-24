@@ -29,7 +29,7 @@ if(isset($_SESSION['session_on'])){
 $echo_body=ob_get_contents();//輸出擷取到的echo
 ob_end_clean();//清空擷取到的內容
 //
-$ver= 'log+dir ver.131123fix1228'; //版本
+$ver= 'log+dir ver.131125fix1228'; //版本
 $host=$_SERVER["SERVER_NAME"]; //主機名稱
 $echo_data='';
 $echo_data.=$echo_body;
@@ -52,7 +52,7 @@ switch($mode){
 	//unset($_SESSION['uid']);
 	//
 	//$cell = Chop($cell);//去除長空白
-	if(strlen($cell)==0){die("內文不可為空");}
+	if(strlen($cell)==0){die("<a href='$phpself'>內文不可為空</a>");}
 	//$postbyte=100;
 	//if(strlen($cell) > $postbyte){echo "內文太長".strlen($cell)."/".$postbyte;break;}
 	if(get_magic_quotes_gpc()) {$cell = stripslashes($cell);} //去掉字串中的反斜線字元
@@ -61,8 +61,8 @@ switch($mode){
 
 	//修正//必要的變色
 	$cell = preg_replace("/\r\n/","\n",$cell);
-	$cell = preg_replace("/http\:\/\//", "ttpp//", $cell);//
-	$cell = preg_replace("/ttpp\/\//", "http://", $cell);//有些免空會擋過多的http字串
+	$cell = preg_replace("/http\:\/\//", "Ettpp//", $cell);//
+	$cell = preg_replace("/Ettpp\/\//", "http://", $cell);//有些免空會擋過多的http字串
 	$count_http=substr_count($cell,'http');//計算連結數量
 	//連結加底線
 	$cell = preg_replace("/(http|https)(:\/\/[\!-;\=\?-\~]+)/si", "<span class='link'>\\1\\2</span>", $cell);
@@ -283,16 +283,28 @@ EOT;
 			if($i<$countline-1){$output.="<br/>\n";}//最後一項不換行
 		}
 	}
-	$tmp='';
-	$tmp="<title>".$host."</title>";
 	$tmp_link='';
 	$tmp_link="<a href='$phpself'>w</a><a href='./txtsavelog_index_list.php'>x</a><a href='../'>r</a>";
-	$output=$tmp_link.'<br/>'.$output.'<br/>'.$tmp_link;
-	$output="<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">".
-	''.$tmp.
-	"</head><body bgcolor=\"#FFFFEE\" text=\"#800000\" link=\"#0000EE\" vlink=\"#0000EE\">\n".$output."\n<br>".
-	"</body></html>";
-
+$output=<<<EOT
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>$host</title>
+<style>
+body {
+font-size:20px;
+font-family:'細明體','MingLiU';
+}
+a:hover {color:#DD0000 !important;}
+</style>
+</head>
+<body bgcolor="#FFFFEE" text="#800000" link="#0000EE" vlink="#0000EE">
+$tmp_link
+<br/>
+$output
+<br/>
+$tmp_link
+</body></html>
+EOT;
 	//$tmp="txtsavelist.htm";
 	$tmp="index.htm";
 	$echo_data.= @chmod($tmp,0666)?'c':'F'; //index權限 //@=不顯示錯誤
@@ -414,7 +426,7 @@ function check2(){
 	var re = new RegExp(regStr,'gi');
 	tmp = document.getElementById("celltext").value;
 	//alert(regStr);
-	tmp = tmp.replace(re,"ttpp//");//有些免空會擋過多的http字串
+	tmp = tmp.replace(re,"Ettpp//");//有些免空會擋過多的http字串
 	document.getElementById("celltext").value =tmp;
 	document.getElementById("form1").submit();
 }
