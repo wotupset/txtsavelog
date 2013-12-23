@@ -10,7 +10,8 @@ $phpself=basename($_SERVER["SCRIPT_FILENAME"]);//被執行的文件檔名
 $php_link="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"]."";
 $ver= 'log+dir ver.131222fix0714'; //版本
 //
-$time=time()+8*60*60;//UNIX時間時區設定
+date_default_timezone_set("Asia/Taipei");
+$time=time();//UNIX時間時區設定
 $time=(string)$time;
 $chk_time_key='abc123';
 $chk_time_enc=passport_encrypt($time,$chk_time_key);

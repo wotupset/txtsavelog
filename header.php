@@ -36,7 +36,7 @@ if($query_string){
 			$file_name=$query_string;//檔案名稱
 			$pp=1;
 		break;
-		case "txtsavelog_index_list.php":
+		case "index2.php":
 			$file_name=$query_string;//檔案名稱
 			$pp=1;
 		break;

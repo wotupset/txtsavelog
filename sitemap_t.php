@@ -188,18 +188,20 @@ $op_max_end=$op_max-$op_max_head; //後段隨機的url數量
 if($count_line>$op_max){//檔案多於$op_max個直接列出
 	$output_head=array_splice($output, 0, $op_max_head);//抽出陣列的一部份 //第0個開始 到第10個
 	foreach($output_head as $key => $value){
-		$echo_data.= "<url><loc>".$value."</loc></url>\n"; //前面固定的xml內容
+		$echo_data.= "<url><loc>".$value."</loc><changefreq>never</changefreq></url>\n"; //前面固定的xml內容
 	}
 	array_splice($output, 0, $op_max_head);//移除陣列的一部份 //第0個開始 到第10個
 	//print_r($output);
+	$count_line2 = count($output);
+	if($count_line2 < $op_max_end){$op_max_end=$count_line2;}
 	$rand_keys=array_rand($output,$op_max_end);//函数从数组中随机选出一个或多个元素，并返回。
 	//print_r($rand_keys);
 	foreach($rand_keys as $key => $value){
-		$echo_data.= "<url><loc>".$output[$value]."</loc></url>\n";//後面隨機的xml內容
+		$echo_data.= "<url><loc>".$output[$value]."</loc><changefreq>never</changefreq></url>\n";//後面隨機的xml內容
 	}
 }else{//檔案少於$op_max個直接列出
 	foreach($output as $key => $value){
-		$echo_data.= "<url><loc>".$value."</loc></url>\n"; //全部的xml內容
+		$echo_data.= "<url><loc>".$value."</loc><changefreq>never</changefreq></url>\n"; //全部的xml內容
 	}
 }
 mb_internal_encoding("UTF-8");
