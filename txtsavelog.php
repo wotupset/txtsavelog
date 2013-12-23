@@ -8,10 +8,10 @@ $chk_time = $_POST["chk_time"];
 $uid = $_POST["uid"];
 $phpself=basename($_SERVER["SCRIPT_FILENAME"]);//被執行的文件檔名
 $php_link="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"]."";
-
+$ver= 'log+dir ver.131222fix0714'; //版本
 //
-date_default_timezone_set("Asia/Taipei");//時區設定
-$time=(string)time();//UNIX時間時區設定
+$time=time()+8*60*60;//UNIX時間時區設定
+$time=(string)$time;
 $chk_time_key='abc123';
 $chk_time_enc=passport_encrypt($time,$chk_time_key);
 //session_save_path(realpath('./session_save/'));
@@ -29,7 +29,7 @@ if(isset($_SESSION['session_on'])){
 $echo_body=ob_get_contents();//輸出擷取到的echo
 ob_end_clean();//清空擷取到的內容
 //
-$ver= 'log+dir ver.131125fix1228'; //版本
+
 $host=$_SERVER["SERVER_NAME"]; //主機名稱
 $echo_data='';
 $echo_data.=$echo_body;
@@ -61,8 +61,8 @@ switch($mode){
 
 	//修正//必要的變色
 	$cell = preg_replace("/\r\n/","\n",$cell);
-	$cell = preg_replace("/http\:\/\//", "Ettpp//", $cell);//
-	$cell = preg_replace("/Ettpp\/\//", "http://", $cell);//有些免空會擋過多的http字串
+	$cell = preg_replace("/http\:\/\//", "EttppZX", $cell);//
+	$cell = preg_replace("/EttppZX/", "http://", $cell);//有些免空會擋過多的http字串
 	$count_http=substr_count($cell,'http');//計算連結數量
 	//連結加底線
 	$cell = preg_replace("/(http|https)(:\/\/[\!-;\=\?-\~]+)/si", "<span class='link'>\\1\\2</span>", $cell);
@@ -163,15 +163,17 @@ if(!is_writeable(realpath("./"))){ die("根目錄沒有寫入權限，請修改�
 if(!is_dir(realpath($dir_mth))){die("月份資料夾不存在");}
 if(!is_writeable(realpath($dir_mth))){die("月份資料夾無法寫入");}
 if(!is_readable(realpath($dir_mth))){die("月份資料夾無法讀取");}
-
+if(is_file("index.php")){
+	rename("index.php","index2.php") or unlink("index.php");//index.php的優先權大於htm
+}
 if(!is_dir($dir_mth)){//子資料夾不存在
 	//
 }else{//子資料夾存在.
-	if(!is_file("txtsavelog_index_list.php")){//如果根目錄沒有index檔案
+	if(!file_exists("index2.php")){//如果根目錄沒有index檔案
 		die('index檔案遺失');
 	}else{//根目錄有index檔案
 		if(!is_file($dir_mth."index.php")){//如果該月目錄沒有index檔案
-			$chk=@copy("txtsavelog_index_list.php", $dir_mth."index.php");//複製檔案到該月目錄
+			$chk=@copy("index2.php", $dir_mth."index.php");//複製檔案到該月目錄
 			if(!$chk){die('複製檔案失敗');}
 		}
 	}
@@ -284,7 +286,7 @@ EOT;
 		}
 	}
 	$tmp_link='';
-	$tmp_link="<a href='$phpself'>w</a><a href='./txtsavelog_index_list.php'>x</a><a href='../'>r</a>";
+	$tmp_link="<a href='$phpself'>w</a><a href='./index2.php'>x</a><a href='../'>r</a>";
 $output=<<<EOT
 <html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -317,9 +319,7 @@ EOT;
 	$echo_data.= "".filesize($tmp)."]";//index檔案大小
 	$echo_data.=$log_arr_ct;
 	////htm//
-	if(is_file("index.php")){
-		rename("index.php","index.php_") or unlink("index.php");//index.php的優先權大於htm
-	}
+
 	////--log ver
 
 	//$url = "http://".$_SERVER["SERVER_NAME"]."".$_SERVER["PHP_SELF"]."";
@@ -426,7 +426,7 @@ function check2(){
 	var re = new RegExp(regStr,'gi');
 	tmp = document.getElementById("celltext").value;
 	//alert(regStr);
-	tmp = tmp.replace(re,"Ettpp//");//有些免空會擋過多的http字串
+	tmp = tmp.replace(re,"EttppZX");//有些免空會擋過多的http字串
 	document.getElementById("celltext").value =tmp;
 	document.getElementById("form1").submit();
 }

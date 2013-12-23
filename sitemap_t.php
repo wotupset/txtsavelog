@@ -179,13 +179,13 @@ foreach($matches_unique[4] as $val){
 ////////根目錄(3)////////*
 //echo "wwww";
 rsort($output);//新的在前 
-array_splice($output,9000);//移除陣列第?項之後的部份
+array_splice($output,13000);//移除陣列第?項之後的部份
 $count_line = count($output);
 $echo_data='';
-$op_max=100; //輸出的url數量
-$op_max_head=30; //前段最新的url數量
+$op_max=1300; //輸出的url數量
+$op_max_head=130; //前段最新的url數量
 $op_max_end=$op_max-$op_max_head; //後段隨機的url數量
-if($count_line>$op_max){
+if($count_line>$op_max){//檔案多於$op_max個直接列出
 	$output_head=array_splice($output, 0, $op_max_head);//抽出陣列的一部份 //第0個開始 到第10個
 	foreach($output_head as $key => $value){
 		$echo_data.= "<url><loc>".$value."</loc></url>\n"; //前面固定的xml內容
@@ -197,7 +197,7 @@ if($count_line>$op_max){
 	foreach($rand_keys as $key => $value){
 		$echo_data.= "<url><loc>".$output[$value]."</loc></url>\n";//後面隨機的xml內容
 	}
-}else{//檔案少於60個直接列出
+}else{//檔案少於$op_max個直接列出
 	foreach($output as $key => $value){
 		$echo_data.= "<url><loc>".$value."</loc></url>\n"; //全部的xml內容
 	}

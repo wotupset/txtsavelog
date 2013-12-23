@@ -8,7 +8,9 @@ $htmlhead = <<<EOT
 <html><head>
 <title>dlphp</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="Robots" contect="noindex,follow">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<META http-equiv="Content-Style-Type" content="text/css">
+<meta name="Robots" content="noindex,follow">
 <STYLE TYPE="text/css"><!--
 body { font-family:"細明體",'MingLiU'; }
 --></STYLE>
@@ -22,8 +24,8 @@ EOT;
 //****************
 $htmlbody='';
 $htmlbody=<<<EOT
-<a href="./$phpself?txtsavelog.php">txtsavelog.php</a><br/>
-<a href="./$phpself?txtsavelog_index_list.php">txtsavelog_index_list.php</a><br/>
+<a href="./".$phpself."?txtsavelog.php">txtsavelog.php</a><br/>
+<a href="./".$phpself."?index2.php">index2.php</a><br/>
 <a href="../">../</a><br/>
 
 EOT;
@@ -48,15 +50,15 @@ if($query_string){
 		}
 		$f_size=(string)filesize($file_name);//檔案大小
 		$tmp=$tmp.'_'.substr(md5_file($file_name),0,5);//?
-		header('Content-type: application/zip');
+		header('Content-type: text/plain');
 		header("Content-Length:".$f_size);
 		header('Content-Transfer-Encoding: Binary'); //
-		header('Content-type:application/force-download'); //強制下載
-		$tmp="Content-Disposition: attachment; filename='$file_name'";
+		//header('Content-type:application/force-download'); //強制下載
+		$tmp="Content-Disposition: attachment; filename=$file_name";
 		header($tmp);
 		readfile($file_name);
 	}else{
-	header("location: $phpself"); //把浏览器重定向到index.php 
+		header("location: $phpself"); //把浏览器重定向
 	}
 }
 echo $htmlhead;
