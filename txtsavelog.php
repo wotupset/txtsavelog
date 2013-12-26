@@ -8,7 +8,7 @@ $chk_time = $_POST["chk_time"];
 $uid = $_POST["uid"];
 $phpself=basename($_SERVER["SCRIPT_FILENAME"]);//被執行的文件檔名
 $php_link="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"]."";
-$ver= 'log+dir ver.131222fix0714'; //版本
+$ver= 'log+dir ver.131226j1925'; //版本
 //
 date_default_timezone_set("Asia/Taipei");
 $time=time();//UNIX時間時區設定
@@ -164,11 +164,14 @@ if(!is_writeable(realpath("./"))){ die("根目錄沒有寫入權限，請修改�
 if(!is_dir(realpath($dir_mth))){die("月份資料夾不存在");}
 if(!is_writeable(realpath($dir_mth))){die("月份資料夾無法寫入");}
 if(!is_readable(realpath($dir_mth))){die("月份資料夾無法讀取");}
-if(is_file("index.php")){
+if(is_file("index.php")){//確認檔案存在
+	if(is_file("index2.php")){//確認檔案存在
+		unlink("index2.php");
+	}
 	rename("index.php","index2.php") or unlink("index.php");//index.php的優先權大於htm
 }
 if(!is_dir($dir_mth)){//子資料夾不存在
-	//
+	//沒事
 }else{//子資料夾存在.
 	if(!file_exists("index2.php")){//如果根目錄沒有index檔案
 		die('index檔案遺失');
@@ -216,6 +219,24 @@ s.src="http://widgets.amung.us/small.js";
 document.getElementsByTagName("head")[0].appendChild(s);
 })();</script>
 
+<!-- Start 1FreeCounter.com code -->
+  
+  <script language="JavaScript">
+  var data = '&r=' + escape(document.referrer)
+	+ '&n=' + escape(navigator.userAgent)
+	+ '&p=' + escape(navigator.userAgent)
+	+ '&g=' + escape(document.location.href);
+
+  if (navigator.userAgent.substring(0,1)>'3')
+    data = data + '&sd=' + screen.colorDepth 
+	+ '&sw=' + escape(screen.width+'x'+screen.height);
+
+  document.write('<a href="http://www.1freecounter.com/stats.php?i=87779" target=\"_blank\" >');
+  document.write('<img alt="Free Counter" border=0 hspace=0 '+'vspace=0 src="http://www.1freecounter.com/counter.php?i=87779' + data + '">');
+  document.write('</a>');
+  </script>
+
+<!-- End 1FreeCounter.com code -->
 EOT;
 //***************
 $dev_link2=<<<EOT
