@@ -1,8 +1,11 @@
 <?php
-header('Content-type: text/html; charset=utf-8');
-//跟txtsavelog.php放在一起
-$time = time();
-$tim = $timex.substr(microtime(),2,3);
+header('Content-type: text/xml; charset=utf-8');
+$phpself=basename($_SERVER["SCRIPT_FILENAME"]);//被執行的文件檔名
+$phphost=$_SERVER["SERVER_NAME"];
+$query_string=$_SERVER['QUERY_STRING'];
+date_default_timezone_set("Asia/Taipei");
+$GLOBALS['time'] = time();//UNIX時間時區設定
+$GLOBALS['date_ym']=date("ym", $GLOBALS['time']);//年月
 
 $u = "http://".$_SERVER["SERVER_NAME"]."".$_SERVER["PHP_SELF"]."";
 //echo $u."\n";
@@ -206,12 +209,42 @@ if($count_line>$op_max){//檔案多於$op_max個直接列出
 }
 mb_internal_encoding("UTF-8");
 $utf8_pack=pack("CCC", 0xef,0xbb,0xbf);//UTF8檔頭
-$xml_head='<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
-$xml_end='</urlset>';
+$xml_head=<<<EOT
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+EOT;
+$xml_head="".$xml_head."\n";
+$xml_end="</urlset>";
+$xml_end="".$xml_end."\n";
 
-echo $utf8_pack;
-echo $xml_head;
+$echo_data=$utf8_pack.$xml_head.$echo_data.$xml_end;
+
 echo $echo_data;
-echo $xml_end;
+
+rec($phpself,$echo_data);
+
+function rec($x,$y){
+	$logfile="./".$x."_.xml";
+	$tmp_f_ct=0;
+	//****************
+if(!is_writeable(realpath('./'))){die("所在目錄無法寫入");} //檢查根目錄權限
+	if(is_file($logfile)){//檔案存在就載入紀錄
+		if(!is_writeable(realpath($logfile))){die("檔案無法寫入");}
+		if(!is_readable(realpath($logfile))){die("檔案無法讀取");}
+	}else{//檔案不存在
+		$cp = fopen($logfile, "a+");//建立空的紀錄檔
+		fclose($cp);
+	}
+	$input_data=$y; //加入新資料
+	$cp = fopen($logfile, "a+") or die('die#fopen');// 讀寫模式, 指標於最後, 找不到會嘗試建立檔案
+	flock($cp, LOCK_EX);
+	//rewind($cp); //從頭讀取
+	//$buf=fread($cp,1000000); //讀取至暫存
+	ftruncate($cp, 0); //砍資料至0
+	fputs($cp, $input_data);//寫入
+	fclose($cp);//關閉檔案要求
+	//**************
+	$x=1;
+	return $x;
+}
 ?>
