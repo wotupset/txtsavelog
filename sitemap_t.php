@@ -1,8 +1,9 @@
 <?php
-header('Content-type: text/xml; charset=utf-8');
+
+extract($_POST,EXTR_SKIP);extract($_GET,EXTR_SKIP);extract($_COOKIE,EXTR_SKIP);
+$query_string=$_SERVER['QUERY_STRING'];
 $phpself=basename($_SERVER["SCRIPT_FILENAME"]);//被執行的文件檔名
 $phphost=$_SERVER["SERVER_NAME"];
-$query_string=$_SERVER['QUERY_STRING'];
 date_default_timezone_set("Asia/Taipei");
 $GLOBALS['time'] = time();//UNIX時間時區設定
 $GLOBALS['date_ym']=date("ym", $GLOBALS['time']);//年月
@@ -185,6 +186,7 @@ rsort($output);//新的在前
 array_splice($output,13000);//移除陣列第?項之後的部份
 $count_line = count($output);
 $echo_data='';
+$echo_data_txt='';
 $op_max=1300; //輸出的url數量
 $op_max_head=130; //前段最新的url數量
 $op_max_end=$op_max-$op_max_head; //後段隨機的url數量
@@ -192,6 +194,7 @@ if($count_line>$op_max){//檔案多於$op_max個直接列出
 	$output_head=array_splice($output, 0, $op_max_head);//抽出陣列的一部份 //第0個開始 到第10個
 	foreach($output_head as $key => $value){
 		$echo_data.= "<url><loc>".$value."</loc><changefreq>never</changefreq></url>\n"; //前面固定的xml內容
+		$echo_data_txt.= "".$value."\n"; //前面固定的xml內容
 	}
 	array_splice($output, 0, $op_max_head);//移除陣列的一部份 //第0個開始 到第10個
 	//print_r($output);
@@ -201,34 +204,49 @@ if($count_line>$op_max){//檔案多於$op_max個直接列出
 	//print_r($rand_keys);
 	foreach($rand_keys as $key => $value){
 		$echo_data.= "<url><loc>".$output[$value]."</loc><changefreq>never</changefreq></url>\n";//後面隨機的xml內容
+		$echo_data_txt.= "".$output[$value]."\n";//後面隨機的xml內容
 	}
 }else{//檔案少於$op_max個直接列出
 	foreach($output as $key => $value){
 		$echo_data.= "<url><loc>".$value."</loc><changefreq>never</changefreq></url>\n"; //全部的xml內容
+		$echo_data_txt.= "".$value."\n"; //全部的xml內容
 	}
 }
 mb_internal_encoding("UTF-8");
 $utf8_pack=pack("CCC", 0xef,0xbb,0xbf);//UTF8檔頭
-$xml_head=<<<EOT
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-EOT;
-$xml_head="".$xml_head."\n";
-$xml_end="</urlset>";
-$xml_end="".$xml_end."\n";
-
+$xml_head='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+$xml_end="\n".'</urlset>';
 $echo_data=$utf8_pack.$xml_head.$echo_data.$xml_end;
 
-echo $echo_data;
+switch($query_string){
+	case 'reg':
+		header('Content-type: text/html; charset=utf-8');
+		echo(date_default_timezone_get());
+		echo date("y/m/d H:i:s");
+		echo date("G");
+		$tmp = rec($phpself,$echo_data_txt); //寫在額外的檔案
+		$tmp = ($tmp)?"檔案建立成功":"失敗";
+		echo $tmp;
+		break;
+	default:
+		//header('Content-type: text/xml; charset=utf-8');//免空有廣告會分析失敗
+		header('Content-type: text/html; charset=utf-8');
+		echo $echo_data;
+		if(date('G',$time)==23){//24 小時制的小時，不足二位不補零; 如: "0" 至 "23"
+			rec($phpself,$echo_data_txt); //寫在額外的檔案
+		}else{}
+	break;
+}
 
-rec($phpself,$echo_data);
 
 function rec($x,$y){
-	$logfile="./".$x."_.xml";
+	$logfile="./".$x."_.txt";
 	$tmp_f_ct=0;
 	//****************
-if(!is_writeable(realpath('./'))){die("所在目錄無法寫入");} //檢查根目錄權限
-	if(is_file($logfile)){//檔案存在就載入紀錄
+	if(!is_writeable(realpath('./'))){ //
+		die("所在目錄無法寫入");
+	}
+	if(is_file($logfile)){//檔案存在//檢查檔案權限
 		if(!is_writeable(realpath($logfile))){die("檔案無法寫入");}
 		if(!is_readable(realpath($logfile))){die("檔案無法讀取");}
 	}else{//檔案不存在
@@ -244,7 +262,7 @@ if(!is_writeable(realpath('./'))){die("所在目錄無法寫入");} //檢查根�
 	fputs($cp, $input_data);//寫入
 	fclose($cp);//關閉檔案要求
 	//**************
-	$x=1;
+	if(filesize($logfile)){$x=1;}else{$x=0;}
 	return $x;
 }
 ?>

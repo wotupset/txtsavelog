@@ -237,6 +237,16 @@ document.getElementsByTagName("head")[0].appendChild(s);
   </script>
 
 <!-- End 1FreeCounter.com code -->
+
+<!-- Histats.com  START  (standard)-->
+<script type="text/javascript">document.write(unescape("%3Cscript src=%27http://s10.histats.com/js15.js%27 type=%27text/javascript%27%3E%3C/script%3E"));</script>
+<a href="http://www.histats.com" target="_blank" title="free web hit counter" ><script  type="text/javascript" >
+try {Histats.start(1,2336811,4,511,95,18,"00000000");
+Histats.track_hits();} catch(err){};
+</script></a>
+<noscript><a href="http://www.histats.com" target="_blank"><img  src="http://sstatic1.histats.com/0.gif?2336811&101" alt="free web hit counter" border="0"></a></noscript>
+<!-- Histats.com  END  -->
+
 EOT;
 //***************
 $dev_link2=<<<EOT
