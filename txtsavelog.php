@@ -8,7 +8,7 @@ $chk_time = $_POST["chk_time"];
 $uid = $_POST["uid"];
 $phpself=basename($_SERVER["SCRIPT_FILENAME"]);//被執行的文件檔名
 $php_link="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"]."";
-$ver= 'log+dir ver.131226j1925'; //版本
+$ver= 'log+dir ver.140315c1943'; //版本
 //
 date_default_timezone_set("Asia/Taipei");
 $time=time();//UNIX時間時區設定
@@ -153,11 +153,11 @@ EOT;
 	///
 	//檔案名稱以時間來命名
 	//$time = time();
-	$ymdhis = gmdate("ymd",$time).gmdate("His",$time);
+	$ymdhis = date("ymd",$time).date("His",$time);
 	$tim = $time.substr(microtime(),2,3);
 	//$txtfile=$ymdhis."_".$tim."_txt.htm";
 
-$dir_mth="_".gmdate("ym",$time)."/"; //存放該月檔案
+$dir_mth="_".date("ym",$time)."/"; //存放該月檔案
 if(!is_writeable(realpath("./"))){ die("根目錄沒有寫入權限，請修改權限"); }
 @mkdir($dir_mth, 0777); //建立資料夾 權限0777
 @chmod($dir_mth, 0777); //權限0777
@@ -292,13 +292,12 @@ EOT;
 	$buf=$txtfile.",".$title.",".$age."\n".$buf;
 	$cellarr=array();
 	$cellarr=explode("\n",$buf); //分析log
-	$cc=0;
-		foreach($cellarr as $key => $value) {//逐項檢查
-			if($cellarr[$key]==""){unset($cellarr[$key]);}//空白行去除
-			$cc=$cc+1;
-		}
-	$log_arr_ct=$cc;
+	foreach($cellarr as $key => $value) {//逐項檢查
+		if($cellarr[$key]==""){unset($cellarr[$key]);}//空白行去除
+		$cc=$cc+1;
+	}
 	array_splice($cellarr,300);//移除陣列第300項之後的部份
+	if(count($cellarr)<300){$log_arr_ct="◆◆".count($cellarr);}else{$log_arr_ct=count($cellarr);}
 	$buf=implode("\n",$cellarr);
 	fputs($cp, $buf); //寫回去
 	fclose($cp);
@@ -352,7 +351,7 @@ EOT;
 	fputs($cp, $output);//寫入檔案內容
 	fclose($cp);
 	$echo_data.= "".filesize($tmp)."]";//index檔案大小
-	$echo_data.=$log_arr_ct;
+	$echo_data.=$log_arr_ct;//log行數
 	////htm//
 
 	////--log ver
