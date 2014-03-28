@@ -179,8 +179,8 @@ if(!is_dir($dir_mth)){//子資料夾不存在
 		if(!is_file($dir_mth."index.php")){//如果該月目錄沒有index檔案
 			$chk=@copy("index2.php", $dir_mth."index.php");//複製檔案到該月目錄
 			if(!$chk){
-				die('複製檔案失敗');
-				//$dir_mth="safemode/";
+				//die('複製檔案失敗');
+				$dir_mth="safemode=YES/";
 			}
 		}
 	}
