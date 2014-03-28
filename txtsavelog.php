@@ -181,6 +181,7 @@ if(!is_dir($dir_mth)){//子資料夾不存在
 			if(!$chk){
 				//die('複製檔案失敗');
 				$dir_mth="safemode=YES/";
+				if(!is_dir(realpath($dir_mth))){die("子資料夾不存在 需手動建立");}
 			}
 		}
 	}
