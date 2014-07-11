@@ -6,10 +6,11 @@ $phphost=$_SERVER["SERVER_NAME"];
 date_default_timezone_set("Asia/Taipei");//時區設定 Etc/GMT+8
 $time = time();
 //$tim = $time.substr(microtime(),2,3);
-$tim = microtime(true);
-$ver="v131224.1306";
+//$tim = microtime(true);
+$ver="v140412.1516";
 $ver_md5=md5(sha1($ver));//依版本號加密成MD5
 $ver_color="#".substr($ver_md5,-6);//版本號的顏色
+$md5_file=md5_file("./".$phpself."") or die("[x]md5_file");
 //**********
 $url="./";
 $handle=opendir($url); 
@@ -25,7 +26,7 @@ while(($file = readdir($handle))!==false) {
 				$tmp[1][$cc] = "0";
 				$tmp[2][$cc] = "y";
 			}else{
-				$tmp[1][$cc] = filesize($file);
+				$tmp[1][$cc] = filesize($file);//檔案大小
 				$tmp[2][$cc] = "n";
 			}
 		}
@@ -47,25 +48,38 @@ $httphead = <<<EOT
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <META http-equiv="Content-Script-Type" content="text/javascript">
 <META http-equiv="Content-Style-Type" content="text/css">
-<META NAME='ROBOTS' CONTENT='noINDEX, noFOLLOW'>
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
-<!-- Optional theme -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
-<!-- Latest compiled and minified JavaScript -->
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+<META NAME='ROBOTS' CONTENT='noINDEX, FOLLOW'>
 <STYLE TYPE="text/css"><!--
-body { 
-font-family:"細明體",'MingLiU'; 
-background-color:#FFFFEE;
-color:#800000;
+/*
+border-width:0px 0px 0px 10px;
+border-color:pink;
+border-style:solid;
+border-left:12px solid green;
+position:relative;left:-12px;top:0px;z-index:2;
+
+*/
+body {}
+table {font-family:"細明體",'MingLiU';font-size:16px;border-collapse:collapse;border-spacing:0;}
+a {text-decoration:none;}
+a:hover {text-decoration:underline;}
+.td_left {color:#eeaa88;}
+tr:hover{background-color:#F0E0D6;
 }
-A,A:active,A:link,A:visited {color:#0000EE;}
-A:hover  {color:#000080;background-color:#fafad2;}
-tr:hover {color:#000080;background-color:#fafad2;}
+tr:hover .span_right {
+position:relative;left:-20px;top:0px;z-index:2;
+border-width:0px 0px 0px 20px;
+border-color:pink;
+border-style:solid;
+}
+tr:hover .span_left {
+position:relative;left:0px;top:0px;z-index:3;
+color:#000000;
+visibility:visible;
+}
 --></STYLE>
 </head>
-<body>
+<body bgcolor="#FFFFEE" text="#800000" link="#0000EE" vlink="#003333">
+
 EOT;
 
 $httpend = <<<EOT
@@ -73,58 +87,47 @@ $httpend = <<<EOT
 EOT;
 
 
-//$u = "http://".$_SERVER["SERVER_NAME"]."".$_SERVER["PHP_SELF"]."";
-//echo $u."<br>";
-//$url2=substr($u,0,strrpos($u,"/")+1).$url;
-//echo $url2."<br>";
-
 $httpbody="";//echo
 $date_now=date("y/m/d H:i:s", $time);
 $ver_info= <<<EOT
-<span style='color:$ver_color;'>$ver</span>
-$date_now
-$tim
+<blockquote><pre><span style='color:$ver_color;'>$ver</span> $md5_file</pre></blockquote>
 EOT;
 $httpbody.="\n";
 $line = count($tmp[0]);
 if($line>=1000){$line=1000;}else{$line=$line;}
 $tmp_str=<<<EOT
-<blockquote>
+
 $ver_info
 <table style="width: 500px">
 <thead>
 <tr>
 <th style='text-align: right;width: 80px'>size</th>
-<th>name</th>
+<th style='text-align: left;'>name</th>
 </tr>
 </thead>
 EOT;
 $httpbody.=$tmp_str;
-$httpbody.="<tbody>";
+$httpbody.="\n<tbody>\n";
 for($i = 0; $i < $line; $i++){//從頭
 	$tmp_0_i=$tmp[0][$i];
 	$tmp_1_i=$tmp[1][$i];
 	$tmp_2_i=$tmp[2][$i];
 	
 	if($tmp[2][$i]=="y"){//是資料夾
-$httpbody.=<<<EOT
-<tr>
-<td style='text-align: right;'>$tmp_1_i</td>
-<td><a href='./$tmp_0_i/'>$tmp_0_i</a>◆</td>
-</tr>
-
-EOT;
+		$tmp_0_i_dirmark="◆";
 	}else{//不是資料夾
+		$tmp_0_i_dirmark="";
+	}
 $httpbody.=<<<EOT
 <tr>
-<td style='text-align: right;'>$tmp_1_i</td>
-<td><a href='./$tmp_0_i'>$tmp_0_i</a></td>
+<td class="td_left" style='text-align: right;'><span class="span_left">$tmp_1_i<span></td>
+<td class="td_right" style='text-align: left;' ><span class="span_right"><a href='./$tmp_0_i'>$tmp_0_i</a>$tmp_0_i_dirmark<span></td>
 </tr>
 
 EOT;
-	}
 }//
-$httpbody.="</tbody></table></blockquote>\n";
+$httpbody.="</tbody>\n</table>\n";
+$httpbody.="\n<blockquote><pre>$date_now</pre></blockquote>\n";
 
 $httpbody= "\n".$httpbody."\n";
 echo $httphead."\n" ;

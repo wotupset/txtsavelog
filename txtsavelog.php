@@ -8,7 +8,7 @@ $chk_time = $_POST["chk_time"];
 $uid = $_POST["uid"];
 $phpself=basename($_SERVER["SCRIPT_FILENAME"]);//被執行的文件檔名
 $php_link="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"]."";
-$ver= 'log+dir ver.140315c1943'; //版本
+$ver= 'log+dir ver.140702-0705'; //版本
 //
 date_default_timezone_set("Asia/Taipei");
 $time=time();//UNIX時間時區設定
@@ -16,7 +16,9 @@ $time=(string)$time;
 $chk_time_key='abc123';
 $chk_time_enc=passport_encrypt($time,$chk_time_key);
 //session_save_path(realpath('./session_save/'));
+//session_save_path("./");
 session_start(); //session
+
 $_SESSION['session_on']="on";
 $echo_body='';
 ob_start();
@@ -139,7 +141,7 @@ background-color:black;
 a:hover {color:#DD0000 !important;}
 a:visited {color:#0000EE;}
 a:link {color:#0000EE;}
-pre { font-family:'細明體','MingLiU';}
+pre { font-family:'MingLiU','NSimSun','MS Gothic','DotumChe';}
 .link {border-bottom:1px solid rgb(248,96,0);}
 div {display:none;}
 </style>
@@ -180,8 +182,9 @@ if(!is_dir($dir_mth)){//子資料夾不存在
 			$chk=@copy("index2.php", $dir_mth."index.php");//複製檔案到該月目錄
 			if(!$chk){
 				//die('複製檔案失敗');
-				$dir_mth="safemode=YES/";
+				$dir_mth="safemode/";
 				if(!is_dir(realpath($dir_mth))){die("子資料夾不存在 需手動建立");}
+				@rename("./safemode/", "./safemode=YES/"); //更名
 			}
 		}
 	}
@@ -192,7 +195,23 @@ $txtfile=$dir_mth.$tim.".htm";
 $url = "http://".$_SERVER["SERVER_NAME"]."".$_SERVER["PHP_SELF"]."";
 $url2=substr($url,0,strrpos($url,"/")+1); //根目錄
 $url2=$url2.$txtfile;
+$counter1=<<<EOT
+<div id="disqus_thread" style='border:#000 1px solid;display:block;width:800px;'></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'zh131224'; // required: replace example with your forum shortname
 
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+EOT;
 $counter2=<<<EOT
 <script type="text/javascript" id="tc_9e4dbb3f8d">
 var _tcq = _tcq || []; _tcq.push(['bblog', '9e4dbb3f8d']); 
@@ -216,12 +235,8 @@ target="_blank"><img class="statcounter"
 src="http://c.statcounter.com/8971899/0/a47f72e7/0/"
 alt="web statistics"></a></div></noscript>
 <!-- End of StatCounter Code for Default Guide -->
-	
-<script id="_wauxn2">var _wau = _wau || []; _wau.push(["small", "qpf4hmopruej", "xn2"]);
-(function() {var s=document.createElement("script"); s.async=true;
-s.src="http://widgets.amung.us/small.js";
-document.getElementsByTagName("head")[0].appendChild(s);
-})();</script>
+<a href="http://statcounter.com/p8971899/?guest=1">View My
+Stats</a>
 
 <!-- Start 1FreeCounter.com code -->
   
@@ -298,7 +313,8 @@ EOT;
 		$cc=$cc+1;
 	}
 	array_splice($cellarr,300);//移除陣列第300項之後的部份
-	if(count($cellarr)<300){$log_arr_ct="◆◆".count($cellarr);}else{$log_arr_ct=count($cellarr);}
+	if(count($cellarr)<300){$log_arr_ct_mk="◆";}else{$log_arr_ct_mk="";}
+	$log_arr_ct=$log_arr_ct_mk.count($cellarr);
 	$buf=implode("\n",$cellarr);
 	fputs($cp, $buf); //寫回去
 	fclose($cp);
@@ -329,7 +345,7 @@ $output=<<<EOT
 <style>
 body {
 font-size:20px;
-font-family:'細明體','MingLiU';
+font-family:'MingLiU','NSimSun','MS Gothic','DotumChe';
 }
 a:hover {color:#DD0000 !important;}
 </style>
@@ -422,14 +438,14 @@ $htmlstart=<<<EOT
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <META NAME='ROBOTS' CONTENT='noINDEX, FOLLOW'/>
-<title>$host</title>
+<title>◆$log_arr_ct_mk$host</title>
 <style>
 body {background-color:#FFFFEE;color:#800000;}
 a:hover {color:#DD0000;}
 a:visited {color:#0000EE;}
 a:link {color:#0000EE;}
 .hide {display:none;}
-body { font-family:'細明體','MingLiU';}
+body { font-family:'MingLiU','NSimSun','MS Gothic','DotumChe';}
 </style>
 </head>
 <body>\n
