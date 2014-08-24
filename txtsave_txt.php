@@ -71,13 +71,12 @@ $time = time();
 $ymdhis = date("ymd",$time+8*60*60).date("His",$time+8*60*60);
 $tim = $time.substr(microtime(),2,3);
 $txtfile=$ymdhis."_".$tim."_txt.htm";
-
+//body { font-family:'MingLiU','NSimSun','MS Gothic','DotumChe'; font-size: small;}
 $cp = fopen($txtfile, "a+") or die("建立檔案失敗");// 讀寫模式, 指標於最後, 找不到會嘗試建立檔案
 rewind($cp); //從頭讀取
 fwrite($cp, pack("CCC", 0xef,0xbb,0xbf));//UTF8檔頭
 //fputs($cp, $htmlstart2);
-//body { font-family:'MingLiU','NSimSun','MS Gothic','DotumChe';}
-fputs($cp, "\n<pre style='font-family:'MingLiU','NSimSun','MS Gothic','DotumChe';font-size: small;'>\n");
+fputs($cp, "\n<pre style=\"font-family:'MingLiU','NSimSun','MS Gothic','DotumChe';\">\n");
 fputs($cp, $cell);
 fputs($cp, "</pre>\n");
 //fputs($cp, $htmlend);
