@@ -160,33 +160,22 @@ EOT;
 	//$txtfile=$ymdhis."_".$tim."_txt.htm";
 
 $dir_mth="_".date("ym",$time)."/"; //存放該月檔案
-if(!is_writeable(realpath("./"))){ die("根目錄沒有寫入權限，請修改權限"); }
+//if(!is_writeable(realpath("./"))){ die("根目錄沒有寫入權限，請修改權限"); }
 @mkdir($dir_mth, 0777); //建立資料夾 權限0777
 @chmod($dir_mth, 0777); //權限0777
-if(!is_dir(realpath($dir_mth))){die("月份資料夾不存在");}
-if(!is_writeable(realpath($dir_mth))){die("月份資料夾無法寫入");}
-if(!is_readable(realpath($dir_mth))){die("月份資料夾無法讀取");}
-if(is_file("index.php")){//確認檔案存在
-	if(is_file("index2.php")){//確認檔案存在
-		unlink("index2.php");
-	}
-	rename("index.php","index2.php") or unlink("index.php");//index.php的優先權大於htm
+if(!is_dir( $dir_mth )){die("月份資料夾不存在");}
+if(!is_readable( $dir_mth )){die("月份資料夾無法讀取");}
+if(!is_writeable( $dir_mth )){die("月份資料夾無法寫入");}
+if(is_file("index.php")){//index.php改名 (會建立新的 index.htm)
+	if(is_file("index2.php")){unlink("index2.php");}
+	rename("index.php","index2.php") or die("index.php更名失敗");//改名
 }
-if(!is_dir($dir_mth)){//子資料夾不存在
-	//沒事
-}else{//子資料夾存在.
-	if(!file_exists("index2.php")){//如果根目錄沒有index檔案
-		die('index檔案遺失');
-	}else{//根目錄有index檔案
-		if(!is_file($dir_mth."index.php")){//如果該月目錄沒有index檔案
-			$chk=@copy("index2.php", $dir_mth."index.php");//複製檔案到該月目錄
-			if(!$chk){
-				//die('複製檔案失敗');
-				$dir_mth="safemode/";
-				if(!is_dir(realpath($dir_mth))){die("子資料夾不存在 需手動建立");}
-				@rename("./safemode/", "./safemode=YES/"); //更名
-			}
-		}
+if(!file_exists("index2.php")){//如果根目錄沒有index2.php檔案
+	die('index2.php檔案遺失');
+}else{//根目錄有index2.php檔案
+	if(!is_file($dir_mth."index.php")){//如果該月目錄沒有index.php
+		copy("index2.php", $dir_mth."index.php");//複製index.php到該月目錄
+		if(!is_file($dir_mth."index.php")){die('建立月份index.php失敗');}
 	}
 }
 //
@@ -195,24 +184,8 @@ $txtfile=$dir_mth.$tim.".htm";
 $url = "http://".$_SERVER["SERVER_NAME"]."".$_SERVER["PHP_SELF"]."";
 $url2=substr($url,0,strrpos($url,"/")+1); //根目錄
 $url2=$url2.$txtfile;
-$counter1=<<<EOT
-<div id="disqus_thread" style='border:#000 1px solid;display:block;width:800px;'></div>
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'zh131224'; // required: replace example with your forum shortname
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-EOT;
-$counter2=<<<EOT
+//計數器
+$counter=<<<EOT
 <script type="text/javascript" id="tc_9e4dbb3f8d">
 var _tcq = _tcq || []; _tcq.push(['bblog', '9e4dbb3f8d']); 
 (function() { var e = document.createElement('script'); e.type = 'text/javascript'; e.async = true; e.src = 'http://s.tcimg.com/w/v2/bblog.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(e, s); })();
@@ -266,13 +239,14 @@ Histats.track_hits();} catch(err){};
 <noscript><a href="http://www.histats.com" target="_blank"><img  src="http://sstatic1.histats.com/0.gif?2336811&101" alt="free web hit counter" border="0"></a></noscript>
 <!-- Histats.com  END  -->
 
+<script language="javascript" type="text/javascript" src="http://js.users.51.la/15885849.js"></script>
+<noscript><a href="http://www.51.la/?15885849" target="_blank"><img alt="&#x6211;&#x8981;&#x5566;&#x514D;&#x8D39;&#x7EDF;&#x8BA1;" src="http://img.users.51.la/15885849.asp" style="border:none" /></a></noscript>
 EOT;
 //***************
 $dev_link2=<<<EOT
 <a href="https://sites.google.com/site/ptttxtsave/">†</a><br>
 <a href="../">../</a> <span style="color:rgb(0,137,250);">xlw</span><span style="color:rgb(255,0,43);">oha</span><span style="color:rgb(255,169,0);">etx</span><span style="color:rgb(0,167,83);">fpr</span>
-
-$counter2
+$counter
 EOT;
 	// 读写方式打开，将文件指针指向文件头并将文件大小截为零。如果文件不存在则尝试创建之。
 	$cp = fopen($txtfile, "w+") or die('failed');
